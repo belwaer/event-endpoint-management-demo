@@ -92,14 +92,15 @@ spec:
       buildah login -u serviceaccount -p "$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" --authfile /tmp/dockerconfig_openshift/config.json image-registry.openshift-image-registry.svc:5000
 
       # Extract the auths part from both JSON files
-      AUTH1=$(grep -Po '"auths": \{.*?\}' /tmp/dockerconfig_original/config.json | sed 's/"auths": //')
-      AUTH2=$(grep -Po '"auths": \{.*?\}' /tmp/dockerconfig_openshift/config.json | sed 's/"auths": //')
+      AUTH1=$(jq -r '.auths' /tmp/dockerconfig_original/config.json)
+      AUTH2=$(jq -r '.auths' /tmp/dockerconfig_openshift/config.json)
 
-      # Combine the two auth sections
-      MERGED_AUTH=$(echo "${AUTH1},${AUTH2}" | sed 's/},{/,/g' | sed 's/{//;s/}//')
+      # Merge the auths sections
+      # Combine AUTH2 into AUTH1
+      AUTH1=$(echo "$AUTH1 $AUTH2" | jq -s add)
 
       # Create the merged config.json
-      echo "{\"auths\": {${MERGED_AUTH}}}" > /tmp/dockerconfig/config.json
+      echo "{\"auths\": ${AUTH1}}" > /tmp/dockerconfig/config.json
 
       # Set the merged Docker config as the active one
       export DOCKER_CONFIG="/tmp/dockerconfig/"
