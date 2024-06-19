@@ -73,50 +73,10 @@ spec:
     image: $(params.BUILDER_IMAGE)
     workingDir: $(workspaces.source.path)
     script: |
-      if [[ "$(workspaces.dockerconfig.bound)" == "true" ]]; then
-      # Create directories for Docker configs
-      mkdir -p /tmp/dockerconfig_original
-      mkdir -p /tmp/dockerconfig_openshift
-      mkdir -p /tmp/dockerconfig
-
-      # Copy the original Docker config
-      cp "$(workspaces.dockerconfig.path)/config.json" /tmp/dockerconfig_original/config.json
-
-      # Export the original Docker config path
-      export DOCKER_CONFIG="/tmp/dockerconfig_original/"
-      echo "Original Docker config:"
+      [[ "$(workspaces.dockerconfig.bound)" == "true" ]] && mkdir /tmp/dockerconfig && cp "$(workspaces.dockerconfig.path)/config.json" /tmp/dockerconfig/. && export DOCKER_CONFIG="/tmp/dockerconfig/"
       ls -l $DOCKER_CONFIG
       cat $DOCKER_CONFIG/config.json
 
-      # Login to the OpenShift image registry
-      buildah login -u serviceaccount -p "$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" --authfile /tmp/dockerconfig_openshift/config.json image-registry.openshift-image-registry.svc:5000
-
-      # Extract the auths part from both JSON files
-      AUTH1=$(grep -Po '"auths": \{.*?\}' /tmp/dockerconfig_original/config.json | sed 's/"auths": //')
-      AUTH2=$(grep -Po '"auths": \{.*?\}' /tmp/dockerconfig_openshift/config.json | sed 's/"auths": //')
-
-      # Merge the auths sections
-      if [[ -n "$AUTH1" && -n "$AUTH2" ]]; then
-        # Combine AUTH2 into AUTH1
-        MERGED_AUTH="{\"auths\": {${AUTH1},${AUTH2}}}"
-      elif [[ -n "$AUTH1" ]]; then
-        MERGED_AUTH="{\"auths\": {${AUTH1}}}"
-      elif [[ -n "$AUTH2" ]]; then
-        MERGED_AUTH="{\"auths\": {${AUTH2}}}"
-      else
-        MERGED_AUTH="{\"auths\": {}}"
-      fi
-
-      # Create the merged config.json
-      echo "$MERGED_AUTH" > /tmp/dockerconfig/config.json
-
-      # Set the merged Docker config as the active one
-      export DOCKER_CONFIG="/tmp/dockerconfig/"
-
-      echo "Merged Docker config:"
-      ls -l $DOCKER_CONFIG
-      cat $DOCKER_CONFIG/config.json
-      fi
 
       [[ "$(workspaces.sslcertdir.bound)" == "true" ]] && CERT_DIR_FLAG="--cert-dir $(workspaces.sslcertdir.path)"
       buildah ${CERT_DIR_FLAG} --storage-driver=$(params.STORAGE_DRIVER) bud \
@@ -124,7 +84,11 @@ spec:
         --tls-verify=$(params.TLSVERIFY) --no-cache \
         -f $(params.DOCKERFILE) -t $(params.IMAGE) $(params.CONTEXT)
       [[ "$(params.SKIP_PUSH)" == "true" ]] && echo "Push skipped" && exit 0
+      
+      buildah login -u serviceaccount -p "$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" image-registry.openshift-image-registry.svc:5000
 
+      cat $DOCKER_CONFIG/config.json
+      
       buildah ${CERT_DIR_FLAG} --storage-driver=$(params.STORAGE_DRIVER) push \
         $(params.PUSH_EXTRA_ARGS) --tls-verify=$(params.TLSVERIFY) \
         --digestfile /tmp/image-digest $(params.IMAGE) \
