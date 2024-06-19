@@ -91,8 +91,15 @@ spec:
       # Login to the OpenShift image registry
       buildah login -u serviceaccount -p "$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" --authfile /tmp/dockerconfig_openshift/config.json image-registry.openshift-image-registry.svc:5000
 
-      # Merge the Docker config files using jq
-      jq -s '.[0] * .[1]' /tmp/dockerconfig_original/config.json /tmp/dockerconfig_openshift/config.json > /tmp/dockerconfig/config.json
+      # Merge the auth sections manually
+      AUTH1=$(sed '1d;$d' /tmp/dockerconfig_original/config.json)
+      AUTH2=$(sed '1d;$d' /tmp/dockerconfig_openshift/config.json)
+
+      # Combine the two auth sections, removing duplicates
+      MERGED_AUTH=$(echo "$AUTH1,$AUTH2" | sed 's/,,/,/g' | sed 's/},}/}}/g' | sed 's/{,//g' | sed 's/,}/}/g' | sed 's/,  */,/g')
+
+      # Create the merged config.json
+      echo "{\"auths\": {$MERGED_AUTH}}" > /tmp/dockerconfig/config.json
 
       # Set the merged Docker config as the active one
       export DOCKER_CONFIG="/tmp/dockerconfig/"
