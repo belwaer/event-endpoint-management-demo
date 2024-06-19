@@ -80,6 +80,7 @@ spec:
       # Login to OpenShift registry using Kubernetes service account token
       buildah login -u serviceaccount -p "$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" image-registry.openshift-image-registry.svc:5000
 
+      cat "$(workspaces.dockerconfig.path)/config.json"
       # Login to cp.icr.io registry using credentials from config.json
       buildah login -u cp -p eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJJQk0gTWFya2V0cGxhY2UiLCJpYXQiOjE2NTExNTQxMzIsImp0aSI6IjgwN2VjZmJmNTJhNjRmMmE4NzIzOGUwMGE4Y2I3MzljIn0.YzsVyISHRHxRCPdVdCEIzOSW6Nal9KGaHpn3GFkrosQ cp.icr.io
             
