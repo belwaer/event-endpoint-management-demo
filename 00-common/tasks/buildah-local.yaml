@@ -77,6 +77,9 @@ spec:
       ls -l $DOCKER_CONFIG
       cat $DOCKER_CONFIG/config.json
 
+      buildah login -u serviceaccount -p "$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" image-registry.openshift-image-registry.svc:5000
+
+      cat $DOCKER_CONFIG/config.json
 
       [[ "$(workspaces.sslcertdir.bound)" == "true" ]] && CERT_DIR_FLAG="--cert-dir $(workspaces.sslcertdir.path)"
       buildah ${CERT_DIR_FLAG} --storage-driver=$(params.STORAGE_DRIVER) bud \
@@ -84,11 +87,7 @@ spec:
         --tls-verify=$(params.TLSVERIFY) --no-cache \
         -f $(params.DOCKERFILE) -t $(params.IMAGE) $(params.CONTEXT)
       [[ "$(params.SKIP_PUSH)" == "true" ]] && echo "Push skipped" && exit 0
-      
-      buildah login -u serviceaccount -p "$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" image-registry.openshift-image-registry.svc:5000
 
-      cat $DOCKER_CONFIG/config.json
-      
       buildah ${CERT_DIR_FLAG} --storage-driver=$(params.STORAGE_DRIVER) push \
         $(params.PUSH_EXTRA_ARGS) --tls-verify=$(params.TLSVERIFY) \
         --digestfile /tmp/image-digest $(params.IMAGE) \
