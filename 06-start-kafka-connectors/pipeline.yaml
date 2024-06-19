@@ -193,7 +193,7 @@ spec:
           workspace: pipeline-shared-workspace
       runAfter:
         # need the built connector jar to include in the image
-        - build-datagen-connector-from-source-code
+   #     - build-datagen-connector-from-source-code
 
 
     - name: create-connect-docker-imagestream
