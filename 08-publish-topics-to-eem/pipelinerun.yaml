@@ -21,7 +21,7 @@ spec:
     - name: pipeline-shared-workspace
       volumeClaimTemplate:
         spec:
-          storageClassName: ibmc-block-gold
+          storageClassName: managed-nfs-storage
           accessModes:
             - ReadWriteOnce
           resources:
@@ -30,7 +30,7 @@ spec:
     - name: apic-cli-workspace
       volumeClaimTemplate:
         spec:
-          storageClassName: ibmc-block-gold
+          storageClassName: managed-nfs-storage
           accessModes:
             - ReadWriteOnce
           resources:
