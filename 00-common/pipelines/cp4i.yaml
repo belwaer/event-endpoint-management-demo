@@ -57,7 +57,7 @@ spec:
         kind: ClusterTask
       params:
         - name: url
-          value: "https://github.com/dalelane/event-endpoint-management-demo"
+          value: "https://github.com/belwaer/event-endpoint-management-demo.git"
       workspaces:
         - name: output
           workspace: pipeline-shared-workspace
