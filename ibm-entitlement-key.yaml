@@ -1,0 +1,8 @@
+kind: Secret
+apiVersion: v1
+metadata:
+  name: ibm-entitlement-key
+  namespace: pipeline-credentials
+data:
+  .dockerconfigjson: eyJhdXRocyI6eyJjcC5pY3IuaW8iOnsidXNlcm5hbWUiOiJjcCIsInBhc3N3b3JkIjoiZXlKMGVYQWlPaUpLVjFRaUxDSmhiR2NpT2lKSVV6STFOaUo5LmV5SnBjM01pT2lKSlFrMGdUV0Z5YTJWMGNHeGhZMlVpTENKcFlYUWlPakUyTlRFeE5UUXhNeklzSW1wMGFTSTZJamd3TjJWalptSm1OVEpoTmpSbU1tRTROekl6T0dVd01HRTRZMkkzTXpsakluMC5ZenNWeUlTSFJIeFJDUGRWZENFSXpPU1c2TmFsOUtHYUhwbjNHRmtyb3NRIn19fQo=
+type: kubernetes.io/dockerconfigjson
