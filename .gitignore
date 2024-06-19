@@ -7,3 +7,4 @@ twitter-apikey.yaml
 99-test-gateway/eventgateway.p12
 template-dockerconfig.json
 ibm-entitlement-key.json
+ibm-entitlement-key.yaml
