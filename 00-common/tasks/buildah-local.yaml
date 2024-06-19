@@ -73,14 +73,33 @@ spec:
     image: $(params.BUILDER_IMAGE)
     workingDir: $(workspaces.source.path)
     script: |
-      [[ "$(workspaces.dockerconfig.bound)" == "true" ]] && mkdir /tmp/dockerconfig && cp "$(workspaces.dockerconfig.path)/config.json" /tmp/dockerconfig/. && export DOCKER_CONFIG="/tmp/dockerconfig/"
+      if [[ "$(workspaces.dockerconfig.bound)" == "true" ]]; then
+       # Create a directory for the original Docker config
+      mkdir -p /tmp/dockerconfig_original
+      cp "$(workspaces.dockerconfig.path)/config.json" /tmp/dockerconfig_original/config.json
+
+      # Create a directory for the OpenShift registry Docker config
+      mkdir -p /tmp/dockerconfig_openshift
+
+      # Export the original Docker config path
+      export DOCKER_CONFIG="/tmp/dockerconfig_original/"
+      echo "Original Docker config:"
       ls -l $DOCKER_CONFIG
       cat $DOCKER_CONFIG/config.json
 
-      buildah login -u serviceaccount -p "$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" image-registry.openshift-image-registry.svc:5000
+      # Login to the OpenShift image registry
+      buildah login -u serviceaccount -p "$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" --authfile /tmp/dockerconfig_openshift/config.json image-registry.openshift-image-registry.svc:5000
 
+      # Merge the Docker config files
+      jq -s '.[0] * .[1]' /tmp/dockerconfig_original/config.json /tmp/dockerconfig_openshift/config.json > /tmp/dockerconfig/config.json
+
+      # Set the merged Docker config as the active one
+      export DOCKER_CONFIG="/tmp/dockerconfig/"
+
+      echo "Merged Docker config:"
+      ls -l $DOCKER_CONFIG
       cat $DOCKER_CONFIG/config.json
-
+      fi 
       [[ "$(workspaces.sslcertdir.bound)" == "true" ]] && CERT_DIR_FLAG="--cert-dir $(workspaces.sslcertdir.path)"
       buildah ${CERT_DIR_FLAG} --storage-driver=$(params.STORAGE_DRIVER) bud \
         $(params.BUILD_EXTRA_ARGS) --format=$(params.FORMAT) \
