@@ -14,7 +14,7 @@ wait_for_pipelinerun = \
 	echo "$$PIPELINERUN"; \
 	STATUS="Running"; \
 	while [ $$STATUS = "Running" ]; do \
-		oc wait $$PIPELINERUN --for=condition=Succeeded --timeout=30m; \
+		oc wait $$PIPELINERUN --for=condition=Succeeded --timeout=35m; \
 		STATUS=$$(oc get $$PIPELINERUN -o jsonpath='{.status.conditions[0].reason}'); \
 	done; \
 	if [ "$$STATUS" != "Succeeded" ]; \
