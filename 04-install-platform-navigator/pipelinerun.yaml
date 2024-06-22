@@ -35,7 +35,7 @@ spec:
     - name: pipeline-shared-workspace
       volumeClaimTemplate:
         spec:
-          storageClassName: managed-nfs-storage
+          storageClassName: ocs-storagecluster-cephfs
           accessModes:
             - ReadWriteOnce
           resources:

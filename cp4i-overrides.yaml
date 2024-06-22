@@ -5,7 +5,7 @@ metadata:
   namespace: pipeline-eventdrivendemo
 type: kubernetes.io/basic-auth
 data:
-  ibm-common-service-operator-storageClassName: managed-nfs-storage
-  ibm-integration-platform-navigator-storageClassName: managed-nfs-storage
-  ibm-eventstreams-storageClassName: managed-nfs-storage
-  ibm-apiconnect-storageClassName: managed-nfs-storage
+  ibm-common-service-operator-storageClassName: ocs-storagecluster-cephfs
+  ibm-integration-platform-navigator-storageClassName: ocs-storagecluster-cephfs
+  ibm-eventstreams-storageClassName: ocs-storagecluster-cephfs
+  ibm-apiconnect-storageClassName: ocs-storagecluster-cephfs
