@@ -112,20 +112,20 @@ prepare_general_pipeline: verify_tekton_pipelines_available prepare_entitlement_
 #
 
 
-#prepare_pipeline_commonservices: prepare_general_pipeline
-#	@oc apply -f ./03-install-ibm-common-services/permissions
-#	@oc apply -f ./00-common/pipelines/cp4i.yaml
+prepare_pipeline_commonservices: prepare_general_pipeline
+	@oc apply -f ./03-install-ibm-common-services/permissions
+	@oc apply -f ./00-common/pipelines/cp4i.yaml
 
-#run_pipeline_commonservices:
-#	@echo "------------------------------------------------------------"
-#	@echo "Configuring IBM Common Services..."
-#	@echo "------------------------------------------------------------"
-#	@$(call wait_for_pipelinerun,$(shell oc create -f ./03-install-ibm-common-services/pipelinerun.yaml -o name))
+run_pipeline_commonservices:
+	@echo "------------------------------------------------------------"
+	@echo "Configuring IBM Common Services..."
+	@echo "------------------------------------------------------------"
+	@$(call wait_for_pipelinerun,$(shell oc create -f ./03-install-ibm-common-services/pipelinerun.yaml -o name))
 
-#pipeline_commonservices: prepare_pipeline_commonservices run_pipeline_commonservices
+pipeline_commonservices: prepare_pipeline_commonservices run_pipeline_commonservices
 
-#cleanup_pipeline_commonservices: set_namespace
-#	@oc delete --ignore-not-found=true -f ./03-install-ibm-common-services/permissions
+cleanup_pipeline_commonservices: set_namespace
+	@oc delete --ignore-not-found=true -f ./03-install-ibm-common-services/permissions
 
 
 #
