@@ -53,16 +53,16 @@ spec:
 
     # check that we have a working schema registry
     #  before trying to retrieve schemas from it
-    - name: check-eem-ready
-      taskRef:
-        name: wait-for-cp4i-operand
-      params:
-        - name: instance-type
-          value: "eventendpointmanager"
-        - name: instance-name
-          value: "$(params.eem-instance-name)"
-        - name: instance-namespace
-          value: "$(params.eem-namespace)"
+   # - name: check-eem-ready
+    #  taskRef:
+     #   name: wait-for-cp4i-operand
+      #params:
+      #  - name: instance-type
+       #   value: "eventendpointmanager"
+        #- name: instance-name
+      #    value: "$(params.eem-instance-name)"
+      #  - name: instance-namespace
+       #   value: "$(params.eem-namespace)"
 
 
     # create Kafka credentials that can be used to
@@ -220,10 +220,10 @@ spec:
       workspaces:
         - name: apic-cli
           workspace: apic-cli-workspace
-      runAfter:
+      #runAfter:
         # CLI is downloaded from EEM, so
         #  this can't be done until it is ready
-        - check-eem-ready
+       # - check-eem-ready
 
     # login to the API cloud manager
     - name: apic-login
