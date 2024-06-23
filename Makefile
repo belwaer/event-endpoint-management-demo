@@ -174,30 +174,30 @@ cleanup_pipeline_eventstreams: set_namespace
 #
 #
 
-prepare_pipeline_kafkaconnectors: prepare_general_pipeline
-	@oc apply -f ./06-start-kafka-connectors/permissions
-	@oc apply -f ./06-start-kafka-connectors/tasks
-	@oc apply -f ./06-start-kafka-connectors/pipeline-maven-settings.yaml
-	@oc apply -f ./06-start-kafka-connectors/pipeline.yaml
-	@oc adm policy add-scc-to-user privileged -z pipeline-deployer-serviceaccount
+#prepare_pipeline_kafkaconnectors: prepare_general_pipeline
+#	@oc apply -f ./06-start-kafka-connectors/permissions
+#	@oc apply -f ./06-start-kafka-connectors/tasks
+#	@oc apply -f ./06-start-kafka-connectors/pipeline-maven-settings.yaml
+#	@oc apply -f ./06-start-kafka-connectors/pipeline.yaml
+#	@oc adm policy add-scc-to-user privileged -z pipeline-deployer-serviceaccount
 
-run_pipeline_kafkaconnectors:
-	@echo "------------------------------------------------------------"
-	@echo "Building and starting Kafka connectors..."
-	@echo "------------------------------------------------------------"
-	@oc create secret generic ibm-entitlement-key-config-json --from-file=config.json=dockerconfig.json --dry-run=client -o yaml | oc apply -n pipeline-eventdrivendemo -f -
-	@$(call wait_for_pipelinerun,$(shell oc create -f ./06-start-kafka-connectors/pipelinerun.yaml -o name))
+#run_pipeline_kafkaconnectors:
+#	@echo "------------------------------------------------------------"
+#	@echo "Building and starting Kafka connectors..."
+#	@echo "------------------------------------------------------------"
+#	@oc create secret generic ibm-entitlement-key-config-json --from-file=config.json=dockerconfig.json --dry-run=client -o yaml | oc apply -n pipeline-eventdrivendemo -f -
+#	@$(call wait_for_pipelinerun,$(shell oc create -f ./06-start-kafka-connectors/pipelinerun.yaml -o name))
 
-pipeline_kafkaconnectors: prepare_pipeline_kafkaconnectors run_pipeline_kafkaconnectors
+#pipeline_kafkaconnectors: prepare_pipeline_kafkaconnectors run_pipeline_kafkaconnectors
 
-cleanup_pipeline_kafkaconnectors: set_namespace
-	@oc delete --ignore-not-found=true -f ./06-start-kafka-connectors/tasks
-	@oc delete --ignore-not-found=true -f ./06-start-kafka-connectors/pipeline-maven-settings.yaml
-	@oc delete -l tekton.dev/pipeline=pipeline-kafkaconnectors pipelineruns
-	@oc delete --ignore-not-found=true -f ./06-start-kafka-connectors/pipeline.yaml
-	@oc delete --ignore-not-found=true -f ./06-start-kafka-connectors/permissions
-	@oc adm policy remove-scc-from-user privileged -z pipeline-deployer-serviceaccount
-	@oc delete -n pipeline-eventdrivendemo ibm-entitlement-key-config-json
+#cleanup_pipeline_kafkaconnectors: set_namespace
+#	@oc delete --ignore-not-found=true -f ./06-start-kafka-connectors/tasks
+#	@oc delete --ignore-not-found=true -f ./06-start-kafka-connectors/pipeline-maven-settings.yaml
+#	@oc delete -l tekton.dev/pipeline=pipeline-kafkaconnectors pipelineruns
+#	@oc delete --ignore-not-found=true -f ./06-start-kafka-connectors/pipeline.yaml
+#	@oc delete --ignore-not-found=true -f ./06-start-kafka-connectors/permissions
+#	@oc adm policy remove-scc-from-user privileged -z pipeline-deployer-serviceaccount
+#	@oc delete -n pipeline-eventdrivendemo ibm-entitlement-key-config-json
 
 
 #
@@ -205,41 +205,41 @@ cleanup_pipeline_kafkaconnectors: set_namespace
 #
 
 
-prepare_pipeline_eventendpointmanagement_install: prepare_general_pipeline
-	@oc apply -f ./07-install-event-endpoint-management/permissions
-	@oc apply -f ./00-common/pipelines/cp4i.yaml
+##prepare_pipeline_eventendpointmanagement_install: prepare_general_pipeline
+#	@oc apply -f ./07-install-event-endpoint-management/permissions
+#	@oc apply -f ./00-common/pipelines/cp4i.yaml
 
-run_pipeline_eventendpointmanagement_install:
-	@echo "------------------------------------------------------------"
-	@echo "Creating the Event Endpoint Management instance..."
-	@echo "------------------------------------------------------------"
-	@$(call wait_for_pipelinerun,$(shell oc create -f ./07-install-event-endpoint-management/pipelinerun-install.yaml -o name))
+#run_pipeline_eventendpointmanagement_install:
+#	@echo "------------------------------------------------------------"
+#	@echo "Creating the Event Endpoint Management instance..."
+#	@echo "------------------------------------------------------------"
+#	@$(call wait_for_pipelinerun,$(shell oc create -f ./07-install-event-endpoint-management/pipelinerun-install.yaml -o name))
 
-pipeline_eventendpointmanagement_install: prepare_pipeline_eventendpointmanagement_install run_pipeline_eventendpointmanagement_install
-
-
-prepare_pipeline_eventendpointmanagement_setup: prepare_general_pipeline
-	@oc apply -f ./07-install-event-endpoint-management/permissions
-	@oc apply -f ./07-install-event-endpoint-management/tasks
-	@oc apply -f ./07-install-event-endpoint-management/pipelines
-
-run_pipeline_eventendpointmanagement_setup:
-	@echo "------------------------------------------------------------"
-	@echo "Setting up the Event Endpoint Management instance..."
-	@echo "------------------------------------------------------------"
-	@$(call wait_for_pipelinerun,$(shell oc create -f ./07-install-event-endpoint-management/pipelinerun-setup.yaml -o name))
-
-pipeline_eventendpointmanagement_setup: prepare_pipeline_eventendpointmanagement_setup run_pipeline_eventendpointmanagement_setup
+#pipeline_eventendpointmanagement_install: prepare_pipeline_eventendpointmanagement_install run_pipeline_eventendpointmanagement_install
 
 
-pipeline_eventendpointmanagement: pipeline_eventendpointmanagement_install pipeline_eventendpointmanagement_setup
+#prepare_pipeline_eventendpointmanagement_setup: prepare_general_pipeline
+#	@oc apply -f ./07-install-event-endpoint-management/permissions
+#	@oc apply -f ./07-install-event-endpoint-management/tasks
+#	@oc apply -f ./07-install-event-endpoint-management/pipelines
+#
+#run_pipeline_eventendpointmanagement_setup:
+#	@echo "------------------------------------------------------------"
+#	@echo "Setting up the Event Endpoint Management instance..."
+#	@echo "------------------------------------------------------------"
+#	@$(call wait_for_pipelinerun,$(shell oc create -f ./07-install-event-endpoint-management/pipelinerun-setup.yaml -o name))
 
-cleanup_pipeline_eventendpointmanagement: set_namespace
-	@oc delete --ignore-not-found=true -f ./07-install-event-endpoint-management/permissions
-	@oc delete --ignore-not-found=true -f ./07-install-event-endpoint-management/tasks
-	@oc delete -l tekton.dev/pipeline=pipeline-event-endpoint-management pipelineruns
-	@oc delete --ignore-not-found=true -f ./07-install-event-endpoint-management/pipelines
+#pipeline_eventendpointmanagement_setup: prepare_pipeline_eventendpointmanagement_setup run_pipeline_eventendpointmanagement_setup
+#
 
+#pipeline_eventendpointmanagement: pipeline_eventendpointmanagement_install pipeline_eventendpointmanagement_setup
+
+#cleanup_pipeline_eventendpointmanagement: set_namespace
+#	@oc delete --ignore-not-found=true -f ./07-install-event-endpoint-management/permissions
+#	@oc delete --ignore-not-found=true -f ./07-install-event-endpoint-management/tasks
+#	@oc delete -l tekton.dev/pipeline=pipeline-event-endpoint-management pipelineruns
+#	@oc delete --ignore-not-found=true -f ./07-install-event-endpoint-management/pipelines
+#
 
 #
 #
