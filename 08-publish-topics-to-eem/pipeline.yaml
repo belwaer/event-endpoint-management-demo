@@ -40,16 +40,16 @@ spec:
 
     # check that we have a working schema registry
     #  before trying to retrieve schemas from it
-    - name: check-eventstreams-ready
-      taskRef:
-        name: wait-for-cp4i-operand
-      params:
-        - name: instance-type
-          value: "eventstreams"
-        - name: instance-name
-          value: "$(params.es-instance-name)"
-        - name: instance-namespace
-          value: "$(params.es-namespace)"
+   # - name: check-eventstreams-ready
+    #  taskRef:
+     #   name: wait-for-cp4i-operand
+      #params:
+    #    - name: instance-type
+     #     value: "eventstreams"
+      #  - name: instance-name
+       #   value: "$(params.es-instance-name)"
+       # - name: instance-namespace
+        #  value: "$(params.es-namespace)"
 
     # check that we have a working schema registry
     #  before trying to retrieve schemas from it
@@ -80,7 +80,7 @@ spec:
           value: "$(params.es-namespace)"
       runAfter:
         # need a working Event Streams to create credentials
-        - check-eventstreams-ready
+       # - check-eventstreams-ready
         # need the git repo which contains the credential ACLs
         - clone-source-code
       workspaces:
@@ -99,7 +99,7 @@ spec:
           value: "$(params.es-namespace)"
       runAfter:
         # need a working Event Streams to create credentials
-        - check-eventstreams-ready
+       # - check-eventstreams-ready
         # need the git repo which contains the credential ACLs
         - clone-source-code
       workspaces:
@@ -118,7 +118,7 @@ spec:
           value: "$(params.es-namespace)"
       runAfter:
         # need a working Event Streams to create credentials
-        - check-eventstreams-ready
+        #- check-eventstreams-ready
         # need the git repo which contains the credential ACLs
         - clone-source-code
       workspaces:
@@ -149,7 +149,7 @@ spec:
       runAfter:
         # need to wait until the schema registry is ready
         #  to be able to fetch schemas from it
-        - check-eventstreams-ready
+      #  - check-eventstreams-ready
         # need the templates in git to generate docs
         - clone-source-code
         # need the kafka usernames to be ready to use
@@ -175,7 +175,7 @@ spec:
       runAfter:
         # need to wait until the schema registry is ready
         #  to be able to fetch schemas from it
-        - check-eventstreams-ready
+       # - check-eventstreams-ready
         # need the templates in git to generate docs
         - clone-source-code
         # need the kafka usernames to be ready to use
@@ -201,7 +201,7 @@ spec:
       runAfter:
         # need to wait until the schema registry is ready
         #  to be able to fetch schemas from it
-        - check-eventstreams-ready
+       # - check-eventstreams-ready
         # need the templates in git to generate docs
         - clone-source-code
         # need the kafka usernames to be ready to use
@@ -209,36 +209,36 @@ spec:
 
 
     # download the apic CLI needed to publish asyncapis
-    - name: get-apic-cli
-      taskRef:
-        name: get-apic-cli
-      params:
-        - name: instance-name
-          value: "$(params.eem-instance-name)"
-        - name: instance-namespace
-          value: "$(params.eem-namespace)"
-      workspaces:
-        - name: apic-cli
-          workspace: apic-cli-workspace
+   # - name: get-apic-cli
+    #  taskRef:
+     #   name: get-apic-cli
+     # params:
+      #  - name: instance-name
+       #   value: "$(params.eem-instance-name)"
+       # - name: instance-namespace
+        #  value: "$(params.eem-namespace)"
+      #workspaces:
+    #    - name: apic-cli
+     #     workspace: apic-cli-workspace
       #runAfter:
         # CLI is downloaded from EEM, so
         #  this can't be done until it is ready
        # - check-eem-ready
 
     # login to the API cloud manager
-    - name: apic-login
-      taskRef:
-        name: apic-cli-login
-      params:
-        - name: instance-name
-          value: "$(params.eem-instance-name)"
-        - name: instance-namespace
-          value: "$(params.eem-namespace)"
-      workspaces:
-        - name: apic-cli
-          workspace: apic-cli-workspace
-      runAfter:
-        - get-apic-cli
+  #  - name: apic-login
+   #   taskRef:
+    #    name: apic-cli-login
+     # params:
+      #  - name: instance-name
+       #   value: "$(params.eem-instance-name)"
+       # - name: instance-namespace
+        #  value: "$(params.eem-namespace)"
+      #workspaces:
+      #  - name: apic-cli
+       #   workspace: apic-cli-workspace
+      #runAfter:
+      #  - get-apic-cli
 
     # publish generated AsyncAPI docs to the API manager
     - name: asyncapi-publish
@@ -256,12 +256,12 @@ spec:
         - name: product-spec
           value: "product-demo-events.yaml"
       workspaces:
-        - name: apic-cli
-          workspace: apic-cli-workspace
+      #  - name: apic-cli
+       #   workspace: apic-cli-workspace
         - name: output
           workspace: pipeline-shared-workspace
       runAfter:
-        - apic-login
+        #- apic-login
         - generate-stockprices-asyncapi
         - generate-flights-asyncapi
         - generate-random-asyncapi
