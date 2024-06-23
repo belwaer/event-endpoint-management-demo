@@ -1,4 +1,4 @@
-create secret generic ibm-entitlement-key-config-json --from-file=config.json=dockerconfig.json --dry-run=client -o yaml |apiVersion: eventstreams.ibm.com/v1beta2
+apiVersion: eventstreams.ibm.com/v1beta2
 kind: KafkaUser
 metadata:
   name: gateway-credentials-stockprices
