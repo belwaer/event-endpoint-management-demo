@@ -6,8 +6,8 @@ spec:
   version: latest
   license:
     accept: true
-    use: CloudPakForIntegrationNonProduction
-    license: 'L-JTPV-KYG8TF'
+    license: L-HRZF-DWHH7A
+    use: EventAutomationNonProduction
   adminApi: {}
   adminUI: {}
   apicurioRegistry: {}
@@ -63,6 +63,6 @@ spec:
             name: metrics-config
     entityOperator:
       topicOperator: {}
-  requestIbmServices:
-    iam: true
-    monitoring: true
+ # requestIbmServices:
+  #  iam: true
+   # monitoring: true
