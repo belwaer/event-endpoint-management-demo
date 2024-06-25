@@ -7,7 +7,7 @@ spec:
   license:
     accept: true
     use: CloudPakForIntegrationNonProduction
-    license: 'L-JTPV-KYG8TF'
+    license: 'L-YBXJ-ADJNSM'
   adminApi: {}
   adminUI: {}
   apicurioRegistry: {}
