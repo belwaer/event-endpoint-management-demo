@@ -6,8 +6,8 @@ spec:
   version: latest
   license:
     accept: true
-    license: L-HRZF-DWHH7A
-    use: EventAutomationNonProduction
+    use: CloudPakForIntegrationNonProduction
+    license: 'L-JTPV-KYG8TF'
   adminApi: {}
   adminUI: {}
   apicurioRegistry: {}
