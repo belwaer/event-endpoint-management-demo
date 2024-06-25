@@ -67,13 +67,12 @@ x-ibm-configuration:
           bootstrap.servers: $(bootstrapServerAddress)
           sasl.mechanism: SCRAM-SHA-512
           security.protocol: SASL_SSL
-          username: "<< PLACEHOLDER >>"
-          password: "<< PLACEHOLDER >>"
-          transport.cacert: "<< PLACEHOLDER >>"
+          username: token
+          password: G7Zz5Bk_b9C9eDnZzhQrRLNhgM0yITknn_SyKYR5vu65
           clusterconfigid: 831c7256-0c56-4a07-8965-06ed97e06a19
   properties:
     bootstrapServerAddress:
-      value: "<< PLACEHOLDER >>"
+      value: "broker-3-7w0j7yv9fvgs78bc.kafka.svc09.us-south.eventstreams.cloud.ibm.com:9093,broker-1-7w0j7yv9fvgs78bc.kafka.svc09.us-south.eventstreams.cloud.ibm.com:9093,broker-5-7w0j7yv9fvgs78bc.kafka.svc09.us-south.eventstreams.cloud.ibm.com:9093,broker-2-7w0j7yv9fvgs78bc.kafka.svc09.us-south.eventstreams.cloud.ibm.com:9093,broker-4-7w0j7yv9fvgs78bc.kafka.svc09.us-south.eventstreams.cloud.ibm.com:9093,broker-0-7w0j7yv9fvgs78bc.kafka.svc09.us-south.eventstreams.cloud.ibm.com:9093"
   type: asyncapi
   testable: false
   cors:

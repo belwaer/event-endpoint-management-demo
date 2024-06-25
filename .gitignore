@@ -8,3 +8,4 @@ twitter-apikey.yaml
 template-dockerconfig.json
 ibm-entitlement-key.json
 ibm-entitlement-key.yaml
+.DS_STORE

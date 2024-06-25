@@ -90,22 +90,22 @@ prepare_general_pipeline: verify_tekton_pipelines_available prepare_entitlement_
 #
 
 
-#prepare_pipeline_ibmcatalog: prepare_general_pipeline
-#	@oc apply -f ./02-install-ibm-catalog/permissions
-#	@oc apply -f ./02-install-ibm-catalog/pipeline.yaml
+prepare_pipeline_ibmcatalog: prepare_general_pipeline
+	@oc apply -f ./02-install-ibm-catalog/permissions
+	@oc apply -f ./02-install-ibm-catalog/pipeline.yaml
 
-#run_pipeline_ibmcatalog:
-#	@echo "------------------------------------------------------------"
-#	@echo "Installing the IBM Catalog into the cluster..."
-#	@echo "------------------------------------------------------------"
-#	@$(call wait_for_pipelinerun,$(shell oc create -f ./02-install-ibm-catalog/pipelinerun.yaml -o name))
+run_pipeline_ibmcatalog:
+	@echo "------------------------------------------------------------"
+	@echo "Installing the IBM Catalog into the cluster..."
+	@echo "------------------------------------------------------------"
+	@$(call wait_for_pipelinerun,$(shell oc create -f ./02-install-ibm-catalog/pipelinerun.yaml -o name))
 
-#pipeline_ibmcatalog: prepare_pipeline_ibmcatalog run_pipeline_ibmcatalog
+pipeline_ibmcatalog: prepare_pipeline_ibmcatalog run_pipeline_ibmcatalog
 
-#cleanup_pipeline_ibmcatalog: set_namespace
-#	@oc delete --ignore-not-found=true -f ./02-install-ibm-catalog/permissions
-#	@oc delete -l tekton.dev/pipeline=pipeline-ibmcatalog pipelineruns
-#	@oc delete --ignore-not-found=true -f ./02-install-ibm-catalog/pipeline.yaml#
+cleanup_pipeline_ibmcatalog: set_namespace
+	@oc delete --ignore-not-found=true -f ./02-install-ibm-catalog/permissions
+	@oc delete -l tekton.dev/pipeline=pipeline-ibmcatalog pipelineruns
+	@oc delete --ignore-not-found=true -f ./02-install-ibm-catalog/pipeline.yaml#
 
 #
 #
@@ -133,71 +133,71 @@ cleanup_pipeline_commonservices: set_namespace
 #
 
 
-#prepare_pipeline_platformnavigator: prepare_general_pipeline
-#	@oc apply -f ./04-install-platform-navigator/permissions
-#	@oc apply -f ./00-common/pipelines/cp4i.yaml
+prepare_pipeline_platformnavigator: prepare_general_pipeline
+	@oc apply -f ./04-install-platform-navigator/permissions
+	@oc apply -f ./00-common/pipelines/cp4i.yaml
 
-#run_pipeline_platformnavigator:
-#	@echo "------------------------------------------------------------"
-#	@echo "Creating the Cloud Pak for Integration Platform Navigator..."
-#	@echo "------------------------------------------------------------"
-#	@$(call wait_for_pipelinerun,$(shell oc create -f ./04-install-platform-navigator/pipelinerun.yaml -o name))
+run_pipeline_platformnavigator:
+	@echo "------------------------------------------------------------"
+	@echo "Creating the Cloud Pak for Integration Platform Navigator..."
+	@echo "------------------------------------------------------------"
+	@$(call wait_for_pipelinerun,$(shell oc create -f ./04-install-platform-navigator/pipelinerun.yaml -o name))
 
-#pipeline_platformnavigator: prepare_pipeline_platformnavigator run_pipeline_platformnavigator
+pipeline_platformnavigator: prepare_pipeline_platformnavigator run_pipeline_platformnavigator
 
-#cleanup_pipeline_platformnavigator: set_namespace
-#	@oc delete --ignore-not-found=true -f ./04-install-platform-navigator/permissions
+cleanup_pipeline_platformnavigator: set_namespace
+	@oc delete --ignore-not-found=true -f ./04-install-platform-navigator/permissions
+
+
+
+
+
+
+
+prepare_pipeline_eventstreams: prepare_general_pipeline
+	@oc apply -f ./05-install-event-streams/permissions
+	@oc apply -f ./00-common/pipelines/cp4i.yaml
+
+run_pipeline_eventstreams:
+	@echo "------------------------------------------------------------"
+	@echo "Creating the Event Streams instance..."
+	@echo "------------------------------------------------------------"
+	@$(call wait_for_pipelinerun,$(shell oc create -f ./05-install-event-streams/pipelinerun.yaml -o name))
+
+pipeline_eventstreams: prepare_pipeline_eventstreams run_pipeline_eventstreams
+
+cleanup_pipeline_eventstreams: set_namespace
+	@oc delete --ignore-not-found=true -f ./05-install-event-streams/permissions
+
+
 #
 #
 #
-#
-#
 
+prepare_pipeline_kafkaconnectors: prepare_general_pipeline
+	@oc apply -f ./06-start-kafka-connectors/permissions
+	@oc apply -f ./06-start-kafka-connectors/tasks
+	@oc apply -f ./06-start-kafka-connectors/pipeline-maven-settings.yaml
+	@oc apply -f ./06-start-kafka-connectors/pipeline.yaml
+	@oc adm policy add-scc-to-user privileged -z pipeline-deployer-serviceaccount
 
-#prepare_pipeline_eventstreams: prepare_general_pipeline
-#	@oc apply -f ./05-install-event-streams/permissions
-#	@oc apply -f ./00-common/pipelines/cp4i.yaml
+run_pipeline_kafkaconnectors:
+	@echo "------------------------------------------------------------"
+	@echo "Building and starting Kafka connectors..."
+	@echo "------------------------------------------------------------"
+	@oc create secret generic ibm-entitlement-key-config-json --from-file=config.json=dockerconfig.json --dry-run=client -o yaml | oc apply -n pipeline-eventdrivendemo -f -
+	@$(call wait_for_pipelinerun,$(shell oc create -f ./06-start-kafka-connectors/pipelinerun.yaml -o name))
 
-#run_pipeline_eventstreams:
-#	@echo "------------------------------------------------------------"
-#	@echo "Creating the Event Streams instance..."
-#	@echo "------------------------------------------------------------"
-#	@$(call wait_for_pipelinerun,$(shell oc create -f ./05-install-event-streams/pipelinerun.yaml -o name))
+pipeline_kafkaconnectors: prepare_pipeline_kafkaconnectors run_pipeline_kafkaconnectors
 
-#pipeline_eventstreams: prepare_pipeline_eventstreams run_pipeline_eventstreams
-
-#cleanup_pipeline_eventstreams: set_namespace
-#	@oc delete --ignore-not-found=true -f ./05-install-event-streams/permissions
-
-
-#
-#
-#
-
-#prepare_pipeline_kafkaconnectors: prepare_general_pipeline
-#	@oc apply -f ./06-start-kafka-connectors/permissions
-#	@oc apply -f ./06-start-kafka-connectors/tasks
-#	@oc apply -f ./06-start-kafka-connectors/pipeline-maven-settings.yaml
-#	@oc apply -f ./06-start-kafka-connectors/pipeline.yaml
-#	@oc adm policy add-scc-to-user privileged -z pipeline-deployer-serviceaccount
-
-#run_pipeline_kafkaconnectors:
-#	@echo "------------------------------------------------------------"
-#	@echo "Building and starting Kafka connectors..."
-#	@echo "------------------------------------------------------------"
-#	@oc create secret generic ibm-entitlement-key-config-json --from-file=config.json=dockerconfig.json --dry-run=client -o yaml | oc apply -n pipeline-eventdrivendemo -f -
-#	@$(call wait_for_pipelinerun,$(shell oc create -f ./06-start-kafka-connectors/pipelinerun.yaml -o name))
-
-#pipeline_kafkaconnectors: prepare_pipeline_kafkaconnectors run_pipeline_kafkaconnectors
-
-#cleanup_pipeline_kafkaconnectors: set_namespace
-#	@oc delete --ignore-not-found=true -f ./06-start-kafka-connectors/tasks
-#	@oc delete --ignore-not-found=true -f ./06-start-kafka-connectors/pipeline-maven-settings.yaml
-#	@oc delete -l tekton.dev/pipeline=pipeline-kafkaconnectors pipelineruns
-#	@oc delete --ignore-not-found=true -f ./06-start-kafka-connectors/pipeline.yaml
-#	@oc delete --ignore-not-found=true -f ./06-start-kafka-connectors/permissions
-#	@oc adm policy remove-scc-from-user privileged -z pipeline-deployer-serviceaccount
-#	@oc delete -n pipeline-eventdrivendemo ibm-entitlement-key-config-json
+cleanup_pipeline_kafkaconnectors: set_namespace
+	@oc delete --ignore-not-found=true -f ./06-start-kafka-connectors/tasks
+	@oc delete --ignore-not-found=true -f ./06-start-kafka-connectors/pipeline-maven-settings.yaml
+	@oc delete -l tekton.dev/pipeline=pipeline-kafkaconnectors pipelineruns
+	@oc delete --ignore-not-found=true -f ./06-start-kafka-connectors/pipeline.yaml
+	@oc delete --ignore-not-found=true -f ./06-start-kafka-connectors/permissions
+	@oc adm policy remove-scc-from-user privileged -z pipeline-deployer-serviceaccount
+	@oc delete -n pipeline-eventdrivendemo ibm-entitlement-key-config-json
 
 
 #
@@ -246,24 +246,24 @@ cleanup_pipeline_commonservices: set_namespace
 #
 
 
-prepare_pipeline_asyncapi: prepare_general_pipeline
-	@oc apply -f ./08-publish-topics-to-eem/permissions
-	@oc apply -f ./08-publish-topics-to-eem/tasks
-	@oc apply -f ./08-publish-topics-to-eem/pipeline.yaml
+#prepare_pipeline_asyncapi: prepare_general_pipeline
+#	@oc apply -f ./08-publish-topics-to-eem/permissions
+#	@oc apply -f ./08-publish-topics-to-eem/tasks
+#	@oc apply -f ./08-publish-topics-to-eem/pipeline.yaml
 
-run_pipeline_asyncapi:
-	@echo "------------------------------------------------------------"
-	@echo "Generating and publishing doc for connectors..."
-	@echo "------------------------------------------------------------"
-	@$(call wait_for_pipelinerun,$(shell oc create -f ./08-publish-topics-to-eem/pipelinerun.yaml -o name))
+#run_pipeline_asyncapi:
+#	@echo "------------------------------------------------------------"
+#	@echo "Generating and publishing doc for connectors..."
+#	@echo "------------------------------------------------------------"
+#	@$(call wait_for_pipelinerun,$(shell oc create -f ./08-publish-topics-to-eem/pipelinerun.yaml -o name))
 
-pipeline_asyncapi: prepare_pipeline_asyncapi run_pipeline_asyncapi
+#pipeline_asyncapi: prepare_pipeline_asyncapi run_pipeline_asyncapi
 
-cleanup_pipeline_asyncapi: set_namespace
-	@oc delete --ignore-not-found=true -f ./08-publish-topics-to-eem/tasks
-	@oc delete -l tekton.dev/pipeline=pipeline-stockpricesasyncapi pipelineruns
-	@oc delete --ignore-not-found=true -f ./08-publish-topics-to-eem/pipeline.yaml
-	@oc delete --ignore-not-found=true -f ./08-publish-topics-to-eem/permissions
+#cleanup_pipeline_asyncapi: set_namespace
+#	@oc delete --ignore-not-found=true -f ./08-publish-topics-to-eem/tasks
+#	@oc delete -l tekton.dev/pipeline=pipeline-stockpricesasyncapi pipelineruns
+#	@oc delete --ignore-not-found=true -f ./08-publish-topics-to-eem/pipeline.yaml
+#	@oc delete --ignore-not-found=true -f ./08-publish-topics-to-eem/permissions
 
 
 #
@@ -281,13 +281,13 @@ output_details:
 	@echo "username                  : `oc get secret -n ibm-common-services platform-auth-idp-credentials -o jsonpath='{.data.admin_username}' | base64 -d`"
 	@echo "password                  : `oc get secret -n ibm-common-services platform-auth-idp-credentials -o jsonpath='{.data.admin_password}' | base64 -d`\n"
 
-	@echo "Event Endpoint Management : `oc get eventendpointmanager -neventendpointmanagement eem -o jsonpath='{.status.endpoints[?(@.name=="ui")].uri}'`"
-	@echo "username                  : `oc get secret -n ibm-common-services platform-auth-idp-credentials -o jsonpath='{.data.admin_username}' | base64 -d`"
-	@echo "password                  : `oc get secret -n ibm-common-services platform-auth-idp-credentials -o jsonpath='{.data.admin_password}' | base64 -d`\n"
+#	@echo "Event Endpoint Management : `oc get eventendpointmanager -neventendpointmanagement eem -o jsonpath='{.status.endpoints[?(@.name=="ui")].uri}'`"
+#	@echo "username                  : `oc get secret -n ibm-common-services platform-auth-idp-credentials -o jsonpath='{.data.admin_username}' | base64 -d`"
+#	@echo "password                  : `oc get secret -n ibm-common-services platform-auth-idp-credentials -o jsonpath='{.data.admin_password}' | base64 -d`\n"
 
-	@echo "Developer Portal          : `oc get route -neventendpointmanagement eem-ptl-portal-web -o jsonpath='https://{.spec.host}'/events-demo/events-catalog/`"
-	@echo "username                  : `oc get secret -n pipeline-credentials portal-credentials -o jsonpath='{.data.username}' | base64 -d`"
-	@echo "password                  : `oc get secret -n pipeline-credentials portal-credentials -o jsonpath='{.data.password}' | base64 -d`\n"
+#	@echo "Developer Portal          : `oc get route -neventendpointmanagement eem-ptl-portal-web -o jsonpath='https://{.spec.host}'/events-demo/events-catalog/`"
+#	@echo "username                  : `oc get secret -n pipeline-credentials portal-credentials -o jsonpath='{.data.username}' | base64 -d`"
+#	@echo "password                  : `oc get secret -n pipeline-credentials portal-credentials -o jsonpath='{.data.password}' | base64 -d`\n"
 
 
 #

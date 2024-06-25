@@ -31,7 +31,7 @@ public class SampleApplication {
     props.put("ssl.endpoint.identification.algorithm", "");
 
     KafkaConsumer consumer = new KafkaConsumer<String, byte[]>(props);
-    consumer.subscribe(Collections.singletonList("STOCK.PRICES.IBM"));
+    consumer.subscribe(Collections.singletonList("RANDOM.VALUES"));
     try {
       while(true) {
         ConsumerRecords<String, byte[]> records = consumer.poll(Duration.ofSeconds(1));
