@@ -90,22 +90,21 @@ prepare_general_pipeline: verify_tekton_pipelines_available prepare_entitlement_
 #
 
 
-#prepare_pipeline_ibmcatalog: prepare_general_pipeline
-#	@oc apply -f ./02-install-ibm-catalog/permissions
-#	@oc apply -f ./02-install-ibm-catalog/pipeline.yaml
+prepare_pipeline_ibmcatalog: prepare_general_pipeline
+	@oc apply -f ./02-install-ibm-catalog/permissions
+	@oc apply -f ./02-install-ibm-catalog/pipeline.yaml
 
-#run_pipeline_ibmcatalog:
-#	@echo "------------------------------------------------------------"
-#	@echo "Installing the IBM Catalog into the cluster..."
-#	@echo "------------------------------------------------------------"
-#	@$(call wait_for_pipelinerun,$(shell oc create -f ./02-install-ibm-catalog/pipelinerun.yaml -o name))
+run_pipeline_ibmcatalog:
+	@echo "------------------------------------------------------------"
+	@echo "Installing the IBM Catalog into the cluster..."
+	@echo "------------------------------------------------------------"
+	@$(call wait_for_pipelinerun,$(shell oc create -f ./02-install-ibm-catalog/pipelinerun.yaml -o name))
+pipeline_ibmcatalog: prepare_pipeline_ibmcatalog run_pipeline_ibmcatalog
 
-#pipeline_ibmcatalog: prepare_pipeline_ibmcatalog run_pipeline_ibmcatalog
-
-#cleanup_pipeline_ibmcatalog: set_namespace
-#	@oc delete --ignore-not-found=true -f ./02-install-ibm-catalog/permissions
-#	@oc delete -l tekton.dev/pipeline=pipeline-ibmcatalog pipelineruns
-#	@oc delete --ignore-not-found=true -f ./02-install-ibm-catalog/pipeline.yaml#
+cleanup_pipeline_ibmcatalog: set_namespace
+    @oc delete --ignore-not-found=true -f ./02-install-ibm-catalog/permissions
+	@oc delete -l tekton.dev/pipeline=pipeline-ibmcatalog pipelineruns
+	@oc delete --ignore-not-found=true -f ./02-install-ibm-catalog/pipeline.yaml#
 
 #
 #
@@ -133,20 +132,20 @@ cleanup_pipeline_commonservices: set_namespace
 #
 
 
-#prepare_pipeline_platformnavigator: prepare_general_pipeline
-#	@oc apply -f ./04-install-platform-navigator/permissions
-#	@oc apply -f ./00-common/pipelines/cp4i.yaml
+prepare_pipeline_platformnavigator: prepare_general_pipeline
+	@oc apply -f ./04-install-platform-navigator/permissions
+	@oc apply -f ./00-common/pipelines/cp4i.yaml
 
-#run_pipeline_platformnavigator:
-#	@echo "------------------------------------------------------------"
-#	@echo "Creating the Cloud Pak for Integration Platform Navigator..."
-#	@echo "------------------------------------------------------------"
-#	@$(call wait_for_pipelinerun,$(shell oc create -f ./04-install-platform-navigator/pipelinerun.yaml -o name))
+run_pipeline_platformnavigator:
+	@echo "------------------------------------------------------------"
+	@echo "Creating the Cloud Pak for Integration Platform Navigator..."
+	@echo "------------------------------------------------------------"
+	@$(call wait_for_pipelinerun,$(shell oc create -f ./04-install-platform-navigator/pipelinerun.yaml -o name))
 
-#pipeline_platformnavigator: prepare_pipeline_platformnavigator run_pipeline_platformnavigator
+pipeline_platformnavigator: prepare_pipeline_platformnavigator run_pipeline_platformnavigator
 
-#cleanup_pipeline_platformnavigator: set_namespace
-#	@oc delete --ignore-not-found=true -f ./04-install-platform-navigator/permissions
+cleanup_pipeline_platformnavigator: set_namespace
+	@oc delete --ignore-not-found=true -f ./04-install-platform-navigator/permissions
 
 
 
@@ -200,9 +199,6 @@ cleanup_pipeline_kafkaconnectors: set_namespace
 	@oc delete -n pipeline-eventdrivendemo ibm-entitlement-key-config-json
 
 
-#
-#
-#
 
 
 ##prepare_pipeline_eventendpointmanagement_install: prepare_general_pipeline
