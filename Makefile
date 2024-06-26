@@ -153,20 +153,20 @@ cleanup_pipeline_platformnavigator: set_namespace
 
 
 
-prepare_pipeline_eventstreams: prepare_general_pipeline
-	@oc apply -f ./05-install-event-streams/permissions
-	@oc apply -f ./00-common/pipelines/cp4i.yaml
+#prepare_pipeline_eventstreams: prepare_general_pipeline
+#	@oc apply -f ./05-install-event-streams/permissions
+#	@oc apply -f ./00-common/pipelines/cp4i.yaml
 
-run_pipeline_eventstreams:
-	@echo "------------------------------------------------------------"
-	@echo "Creating the Event Streams instance..."
-	@echo "------------------------------------------------------------"
-	@$(call wait_for_pipelinerun,$(shell oc create -f ./05-install-event-streams/pipelinerun.yaml -o name))
+#run_pipeline_eventstreams:
+#	@echo "------------------------------------------------------------"
+#	@echo "Creating the Event Streams instance..."
+#	@echo "------------------------------------------------------------"
+#	@$(call wait_for_pipelinerun,$(shell oc create -f ./05-install-event-streams/pipelinerun.yaml -o name))
 
-pipeline_eventstreams: prepare_pipeline_eventstreams run_pipeline_eventstreams
+#pipeline_eventstreams: prepare_pipeline_eventstreams run_pipeline_eventstreams
 
-cleanup_pipeline_eventstreams: set_namespace
-	@oc delete --ignore-not-found=true -f ./05-install-event-streams/permissions
+#cleanup_pipeline_eventstreams: set_namespace
+#	@oc delete --ignore-not-found=true -f ./05-install-event-streams/permissions
 
 
 #
