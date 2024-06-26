@@ -21,7 +21,7 @@ spec:
           productChargedContainers: eem-demo-connectors-connect
           cloudpakId: c8b82d189e7545f0892db9ef2731b90d
           cloudpakName: IBM Cloud Pak for Integration
-          cloudpakVersion: 2022.2.1
+          cloudpakVersion: 2022.4.1
           productCloudpakRatio: "2:1"
   resources:
     requests:
